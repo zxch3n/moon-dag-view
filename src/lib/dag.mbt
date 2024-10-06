@@ -129,7 +129,13 @@ pub fn visualize(
       } else {
         match this_thread {
           Some(this_thread) => this_thread.deps = [node.id]
-          None => ()
+          None => {
+            let target_tid = visited.get(node.id).unwrap()
+            match output.search_by(fn(x) { x.tid == target_tid }) {
+              Some(target_index) => output[target_index].dep_on_active = true
+              None => ()
+            }
+          }
         }
       }
     }

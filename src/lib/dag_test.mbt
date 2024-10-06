@@ -1221,3 +1221,91 @@ test "disconnected concurrent changes visualization to text" {
     ,
   )
 }
+
+test "interleaving concurrent changes visualization to text" {
+  let dag = {
+    nodes: {
+      "1.1": @lib.Node::{ id: "1.1", lamport: 1, deps: [] },
+      "1.2": @lib.Node::{ id: "1.2", lamport: 1, deps: [] },
+      "2.1": @lib.Node::{ id: "2.1", lamport: 2, deps: ["1.1", "1.2"] },
+      "2.2": @lib.Node::{ id: "2.2", lamport: 2, deps: ["1.1", "1.2"] },
+      "3.1": @lib.Node::{ id: "3.1", lamport: 3, deps: ["2.1", "2.2"] },
+      "3.2": @lib.Node::{ id: "3.2", lamport: 3, deps: ["2.1", "2.2"] },
+    },
+  }
+  let view = @lib.visualize(gen_find(dag), ["3.1", "3.2"])
+  inspect!(
+    @lib.render_dag_as_text(view),
+    content=
+      #|   
+      #| ⊙  3.2
+      #| ├──╮ 
+      #| │  │    
+      #| │  │  ⊙  3.1
+      #| ├──┼──╯ 
+      #| │  │ 
+      #| │  ⊙  2.2
+      #| │  ├──╮ 
+      #| │  │  │ 
+      #| ⊙  │  │  2.1
+      #| ├──┼──┤ 
+      #| │  │  │ 
+      #| │  │  ⊙  1.2
+      #| │  │    
+      #| ├──╯ 
+      #| ⊙  1.1
+      #|   
+      #|
+    ,
+  )
+}
+
+test "interleaving x3 concurrent changes visualization to text" {
+  let dag = {
+    nodes: {
+      "1.1": @lib.Node::{ id: "1.1", lamport: 1, deps: [] },
+      "1.2": @lib.Node::{ id: "1.2", lamport: 1, deps: [] },
+      "1.3": @lib.Node::{ id: "1.3", lamport: 1, deps: [] },
+      "2.1": @lib.Node::{ id: "2.1", lamport: 2, deps: ["1.1", "1.2", "1.3"] },
+      "2.2": @lib.Node::{ id: "2.2", lamport: 2, deps: ["1.1", "1.2", "1.3"] },
+      "2.3": @lib.Node::{ id: "2.3", lamport: 2, deps: ["1.1", "1.2", "1.3"] },
+      "3.1": @lib.Node::{ id: "3.1", lamport: 3, deps: ["2.1", "2.2", "2.3"] },
+      "3.2": @lib.Node::{ id: "3.2", lamport: 3, deps: ["2.1", "2.2", "2.3"] },
+      "3.3": @lib.Node::{ id: "3.3", lamport: 3, deps: ["2.1", "2.2", "2.3"] },
+    },
+  }
+  let view = @lib.visualize(gen_find(dag), ["3.1", "3.2", "3.3"])
+  inspect!(
+    @lib.render_dag_as_text(view),
+    content=
+      #|   
+      #| ⊙  3.3
+      #| ├──┬──╮ 
+      #| │  │  │    
+      #| │  │  │  ⊙  3.2
+      #| ├──┼──┼──╯ 
+      #| │  │  │    
+      #| │  │  │  ⊙  3.1
+      #| ├──┼──┼──╯ 
+      #| │  │  │ 
+      #| │  │  ⊙  2.3
+      #| │  │  ├──┬──╮ 
+      #| │  │  │  │  │ 
+      #| │  ⊙  │  │  │  2.2
+      #| │  ├──┼──┼──┤ 
+      #| │  │  │  │  │ 
+      #| ⊙  │  │  │  │  2.1
+      #| ├──┼──┼──┼──┤ 
+      #| │  │  │  │  │ 
+      #| │  │  │  │  ⊙  1.3
+      #| │  │  │  │    
+      #| │  │  │  │ 
+      #| │  │  │  ⊙  1.2
+      #| │  │  │    
+      #| ├──┴──╯ 
+      #| ⊙  1.1
+      #|   
+      #|
+    ,
+  )
+}
