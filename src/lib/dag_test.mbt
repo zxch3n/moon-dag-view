@@ -69,13 +69,7 @@ test "basic visualization" {
       #|      "cur_tids": [
       #|        0
       #|      ],
-      #|      "output": [
-      #|        {
-      #|          "tid": 0,
-      #|          "deps": [],
-      #|          "dep_on_active": true
-      #|        }
-      #|      ]
+      #|      "output": []
       #|    }
       #|  ]
       #|}
@@ -431,12 +425,12 @@ test "linear changes visualization to text" {
   inspect!(
     @lib.render_dag_as_text(view),
     content=
-      #| │ 
+      #|   
       #| ⊙  2
       #| │ 
       #| │ 
       #| ⊙  1
-      #| │ 
+      #|   
       #|
     ,
   )
@@ -456,7 +450,7 @@ test "concurrent changes visualization to text" {
   inspect!(
     @lib.render_dag_as_text(view),
     content=
-      #| │ 
+      #|   
       #| ⊙  3
       #| ├──╮ ─╮ 
       #| │  │  │ 
@@ -470,7 +464,7 @@ test "concurrent changes visualization to text" {
       #| │  │  │ 
       #| ├──╯ ─╯ 
       #| ⊙  1
-      #| │ 
+      #|   
       #|
     ,
   )
@@ -495,7 +489,7 @@ test "concurrent changes visualization to text" {
   inspect!(
     @lib.render_dag_as_text(view),
     content=
-      #| │ 
+      #|   
       #| ⊙  3
       #| ├──╮ ─╮ ─╮ 
       #| │  │  │  │ 
@@ -512,7 +506,7 @@ test "concurrent changes visualization to text" {
       #| │  │  │ 
       #| ├──╯ ─╯ 
       #| ⊙  1
-      #| │ 
+      #|   
       #|
     ,
   )
@@ -537,9 +531,621 @@ test "complex changes visualization to text" {
   }
   let view = @lib.visualize(gen_find(dag), ["7"])
   inspect!(
+    view.to_json().stringify(indent=4),
+    content=
+      #|{
+      #|    "rows": [
+      #|        {
+      #|            "active": {
+      #|                "node": {
+      #|                    "id": "7",
+      #|                    "deps": [
+      #|                        "6.1",
+      #|                        "6.2"
+      #|                    ],
+      #|                    "lamport": 7
+      #|                },
+      #|                "tid": 0
+      #|            },
+      #|            "active_index": 0,
+      #|            "input": [],
+      #|            "cur_tids": [
+      #|                0
+      #|            ],
+      #|            "output": [
+      #|                {
+      #|                    "tid": 0,
+      #|                    "deps": [
+      #|                        "6.1"
+      #|                    ],
+      #|                    "dep_on_active": true
+      #|                },
+      #|                {
+      #|                    "tid": 1,
+      #|                    "deps": [
+      #|                        "6.2"
+      #|                    ],
+      #|                    "dep_on_active": true
+      #|                }
+      #|            ]
+      #|        },
+      #|        {
+      #|            "active": {
+      #|                "node": {
+      #|                    "id": "6.2",
+      #|                    "deps": [
+      #|                        "5"
+      #|                    ],
+      #|                    "lamport": 6
+      #|                },
+      #|                "tid": 1
+      #|            },
+      #|            "active_index": 1,
+      #|            "input": [
+      #|                {
+      #|                    "tid": 0,
+      #|                    "deps": [
+      #|                        "6.1"
+      #|                    ],
+      #|                    "dep_on_active": false
+      #|                },
+      #|                {
+      #|                    "tid": 1,
+      #|                    "deps": [],
+      #|                    "dep_on_active": true
+      #|                }
+      #|            ],
+      #|            "cur_tids": [
+      #|                0,
+      #|                1
+      #|            ],
+      #|            "output": [
+      #|                {
+      #|                    "tid": 0,
+      #|                    "deps": [
+      #|                        "6.1"
+      #|                    ],
+      #|                    "dep_on_active": false
+      #|                },
+      #|                {
+      #|                    "tid": 1,
+      #|                    "deps": [
+      #|                        "5"
+      #|                    ],
+      #|                    "dep_on_active": true
+      #|                }
+      #|            ]
+      #|        },
+      #|        {
+      #|            "active": {
+      #|                "node": {
+      #|                    "id": "6.1",
+      #|                    "deps": [
+      #|                        "5"
+      #|                    ],
+      #|                    "lamport": 6
+      #|                },
+      #|                "tid": 0
+      #|            },
+      #|            "active_index": 0,
+      #|            "input": [
+      #|                {
+      #|                    "tid": 0,
+      #|                    "deps": [],
+      #|                    "dep_on_active": true
+      #|                },
+      #|                {
+      #|                    "tid": 1,
+      #|                    "deps": [
+      #|                        "5"
+      #|                    ],
+      #|                    "dep_on_active": false
+      #|                }
+      #|            ],
+      #|            "cur_tids": [
+      #|                0,
+      #|                1
+      #|            ],
+      #|            "output": [
+      #|                {
+      #|                    "tid": 0,
+      #|                    "deps": [
+      #|                        "5"
+      #|                    ],
+      #|                    "dep_on_active": true
+      #|                },
+      #|                {
+      #|                    "tid": 1,
+      #|                    "deps": [
+      #|                        "5"
+      #|                    ],
+      #|                    "dep_on_active": false
+      #|                }
+      #|            ]
+      #|        },
+      #|        {
+      #|            "active": {
+      #|                "node": {
+      #|                    "id": "5",
+      #|                    "deps": [
+      #|                        "4.1",
+      #|                        "4.2"
+      #|                    ],
+      #|                    "lamport": 5
+      #|                },
+      #|                "tid": 1
+      #|            },
+      #|            "active_index": 0,
+      #|            "input": [
+      #|                {
+      #|                    "tid": 0,
+      #|                    "deps": [],
+      #|                    "dep_on_active": true
+      #|                },
+      #|                {
+      #|                    "tid": 1,
+      #|                    "deps": [],
+      #|                    "dep_on_active": true
+      #|                }
+      #|            ],
+      #|            "cur_tids": [
+      #|                1
+      #|            ],
+      #|            "output": [
+      #|                {
+      #|                    "tid": 1,
+      #|                    "deps": [
+      #|                        "4.1"
+      #|                    ],
+      #|                    "dep_on_active": true
+      #|                },
+      #|                {
+      #|                    "tid": 2,
+      #|                    "deps": [
+      #|                        "4.2"
+      #|                    ],
+      #|                    "dep_on_active": true
+      #|                }
+      #|            ]
+      #|        },
+      #|        {
+      #|            "active": {
+      #|                "node": {
+      #|                    "id": "4.2",
+      #|                    "deps": [
+      #|                        "3.2"
+      #|                    ],
+      #|                    "lamport": 4
+      #|                },
+      #|                "tid": 2
+      #|            },
+      #|            "active_index": 1,
+      #|            "input": [
+      #|                {
+      #|                    "tid": 1,
+      #|                    "deps": [
+      #|                        "4.1"
+      #|                    ],
+      #|                    "dep_on_active": false
+      #|                },
+      #|                {
+      #|                    "tid": 2,
+      #|                    "deps": [],
+      #|                    "dep_on_active": true
+      #|                }
+      #|            ],
+      #|            "cur_tids": [
+      #|                1,
+      #|                2
+      #|            ],
+      #|            "output": [
+      #|                {
+      #|                    "tid": 1,
+      #|                    "deps": [
+      #|                        "4.1"
+      #|                    ],
+      #|                    "dep_on_active": false
+      #|                },
+      #|                {
+      #|                    "tid": 2,
+      #|                    "deps": [
+      #|                        "3.2"
+      #|                    ],
+      #|                    "dep_on_active": true
+      #|                }
+      #|            ]
+      #|        },
+      #|        {
+      #|            "active": {
+      #|                "node": {
+      #|                    "id": "4.1",
+      #|                    "deps": [
+      #|                        "3.1"
+      #|                    ],
+      #|                    "lamport": 4
+      #|                },
+      #|                "tid": 1
+      #|            },
+      #|            "active_index": 0,
+      #|            "input": [
+      #|                {
+      #|                    "tid": 1,
+      #|                    "deps": [],
+      #|                    "dep_on_active": true
+      #|                },
+      #|                {
+      #|                    "tid": 2,
+      #|                    "deps": [
+      #|                        "3.2"
+      #|                    ],
+      #|                    "dep_on_active": false
+      #|                }
+      #|            ],
+      #|            "cur_tids": [
+      #|                1,
+      #|                2
+      #|            ],
+      #|            "output": [
+      #|                {
+      #|                    "tid": 1,
+      #|                    "deps": [
+      #|                        "3.1"
+      #|                    ],
+      #|                    "dep_on_active": true
+      #|                },
+      #|                {
+      #|                    "tid": 2,
+      #|                    "deps": [
+      #|                        "3.2"
+      #|                    ],
+      #|                    "dep_on_active": false
+      #|                }
+      #|            ]
+      #|        },
+      #|        {
+      #|            "active": {
+      #|                "node": {
+      #|                    "id": "3.2",
+      #|                    "deps": [
+      #|                        "2.2",
+      #|                        "2.3"
+      #|                    ],
+      #|                    "lamport": 3
+      #|                },
+      #|                "tid": 2
+      #|            },
+      #|            "active_index": 1,
+      #|            "input": [
+      #|                {
+      #|                    "tid": 1,
+      #|                    "deps": [
+      #|                        "3.1"
+      #|                    ],
+      #|                    "dep_on_active": false
+      #|                },
+      #|                {
+      #|                    "tid": 2,
+      #|                    "deps": [],
+      #|                    "dep_on_active": true
+      #|                }
+      #|            ],
+      #|            "cur_tids": [
+      #|                1,
+      #|                2
+      #|            ],
+      #|            "output": [
+      #|                {
+      #|                    "tid": 1,
+      #|                    "deps": [
+      #|                        "3.1"
+      #|                    ],
+      #|                    "dep_on_active": false
+      #|                },
+      #|                {
+      #|                    "tid": 2,
+      #|                    "deps": [
+      #|                        "2.2"
+      #|                    ],
+      #|                    "dep_on_active": true
+      #|                },
+      #|                {
+      #|                    "tid": 3,
+      #|                    "deps": [
+      #|                        "2.3"
+      #|                    ],
+      #|                    "dep_on_active": true
+      #|                }
+      #|            ]
+      #|        },
+      #|        {
+      #|            "active": {
+      #|                "node": {
+      #|                    "id": "3.1",
+      #|                    "deps": [
+      #|                        "2.1",
+      #|                        "2.2"
+      #|                    ],
+      #|                    "lamport": 3
+      #|                },
+      #|                "tid": 1
+      #|            },
+      #|            "active_index": 0,
+      #|            "input": [
+      #|                {
+      #|                    "tid": 1,
+      #|                    "deps": [],
+      #|                    "dep_on_active": true
+      #|                },
+      #|                {
+      #|                    "tid": 2,
+      #|                    "deps": [
+      #|                        "2.2"
+      #|                    ],
+      #|                    "dep_on_active": false
+      #|                },
+      #|                {
+      #|                    "tid": 3,
+      #|                    "deps": [
+      #|                        "2.3"
+      #|                    ],
+      #|                    "dep_on_active": false
+      #|                }
+      #|            ],
+      #|            "cur_tids": [
+      #|                1,
+      #|                2,
+      #|                3
+      #|            ],
+      #|            "output": [
+      #|                {
+      #|                    "tid": 1,
+      #|                    "deps": [
+      #|                        "2.1"
+      #|                    ],
+      #|                    "dep_on_active": true
+      #|                },
+      #|                {
+      #|                    "tid": 2,
+      #|                    "deps": [
+      #|                        "2.2"
+      #|                    ],
+      #|                    "dep_on_active": true
+      #|                },
+      #|                {
+      #|                    "tid": 3,
+      #|                    "deps": [
+      #|                        "2.3"
+      #|                    ],
+      #|                    "dep_on_active": false
+      #|                }
+      #|            ]
+      #|        },
+      #|        {
+      #|            "active": {
+      #|                "node": {
+      #|                    "id": "2.3",
+      #|                    "deps": [
+      #|                        "1"
+      #|                    ],
+      #|                    "lamport": 2
+      #|                },
+      #|                "tid": 3
+      #|            },
+      #|            "active_index": 2,
+      #|            "input": [
+      #|                {
+      #|                    "tid": 1,
+      #|                    "deps": [
+      #|                        "2.1"
+      #|                    ],
+      #|                    "dep_on_active": false
+      #|                },
+      #|                {
+      #|                    "tid": 2,
+      #|                    "deps": [
+      #|                        "2.2"
+      #|                    ],
+      #|                    "dep_on_active": false
+      #|                },
+      #|                {
+      #|                    "tid": 3,
+      #|                    "deps": [],
+      #|                    "dep_on_active": true
+      #|                }
+      #|            ],
+      #|            "cur_tids": [
+      #|                1,
+      #|                2,
+      #|                3
+      #|            ],
+      #|            "output": [
+      #|                {
+      #|                    "tid": 1,
+      #|                    "deps": [
+      #|                        "2.1"
+      #|                    ],
+      #|                    "dep_on_active": false
+      #|                },
+      #|                {
+      #|                    "tid": 2,
+      #|                    "deps": [
+      #|                        "2.2"
+      #|                    ],
+      #|                    "dep_on_active": false
+      #|                },
+      #|                {
+      #|                    "tid": 3,
+      #|                    "deps": [
+      #|                        "1"
+      #|                    ],
+      #|                    "dep_on_active": true
+      #|                }
+      #|            ]
+      #|        },
+      #|        {
+      #|            "active": {
+      #|                "node": {
+      #|                    "id": "2.2",
+      #|                    "deps": [
+      #|                        "1"
+      #|                    ],
+      #|                    "lamport": 2
+      #|                },
+      #|                "tid": 2
+      #|            },
+      #|            "active_index": 1,
+      #|            "input": [
+      #|                {
+      #|                    "tid": 1,
+      #|                    "deps": [
+      #|                        "2.1"
+      #|                    ],
+      #|                    "dep_on_active": false
+      #|                },
+      #|                {
+      #|                    "tid": 2,
+      #|                    "deps": [],
+      #|                    "dep_on_active": true
+      #|                },
+      #|                {
+      #|                    "tid": 3,
+      #|                    "deps": [
+      #|                        "1"
+      #|                    ],
+      #|                    "dep_on_active": false
+      #|                }
+      #|            ],
+      #|            "cur_tids": [
+      #|                1,
+      #|                2,
+      #|                3
+      #|            ],
+      #|            "output": [
+      #|                {
+      #|                    "tid": 1,
+      #|                    "deps": [
+      #|                        "2.1"
+      #|                    ],
+      #|                    "dep_on_active": false
+      #|                },
+      #|                {
+      #|                    "tid": 2,
+      #|                    "deps": [
+      #|                        "1"
+      #|                    ],
+      #|                    "dep_on_active": true
+      #|                },
+      #|                {
+      #|                    "tid": 3,
+      #|                    "deps": [
+      #|                        "1"
+      #|                    ],
+      #|                    "dep_on_active": false
+      #|                }
+      #|            ]
+      #|        },
+      #|        {
+      #|            "active": {
+      #|                "node": {
+      #|                    "id": "2.1",
+      #|                    "deps": [
+      #|                        "1"
+      #|                    ],
+      #|                    "lamport": 2
+      #|                },
+      #|                "tid": 1
+      #|            },
+      #|            "active_index": 0,
+      #|            "input": [
+      #|                {
+      #|                    "tid": 1,
+      #|                    "deps": [],
+      #|                    "dep_on_active": true
+      #|                },
+      #|                {
+      #|                    "tid": 2,
+      #|                    "deps": [
+      #|                        "1"
+      #|                    ],
+      #|                    "dep_on_active": false
+      #|                },
+      #|                {
+      #|                    "tid": 3,
+      #|                    "deps": [
+      #|                        "1"
+      #|                    ],
+      #|                    "dep_on_active": false
+      #|                }
+      #|            ],
+      #|            "cur_tids": [
+      #|                1,
+      #|                2,
+      #|                3
+      #|            ],
+      #|            "output": [
+      #|                {
+      #|                    "tid": 1,
+      #|                    "deps": [
+      #|                        "1"
+      #|                    ],
+      #|                    "dep_on_active": true
+      #|                },
+      #|                {
+      #|                    "tid": 2,
+      #|                    "deps": [
+      #|                        "1"
+      #|                    ],
+      #|                    "dep_on_active": false
+      #|                },
+      #|                {
+      #|                    "tid": 3,
+      #|                    "deps": [
+      #|                        "1"
+      #|                    ],
+      #|                    "dep_on_active": false
+      #|                }
+      #|            ]
+      #|        },
+      #|        {
+      #|            "active": {
+      #|                "node": {
+      #|                    "id": "1",
+      #|                    "deps": [],
+      #|                    "lamport": 1
+      #|                },
+      #|                "tid": 3
+      #|            },
+      #|            "active_index": 0,
+      #|            "input": [
+      #|                {
+      #|                    "tid": 1,
+      #|                    "deps": [],
+      #|                    "dep_on_active": true
+      #|                },
+      #|                {
+      #|                    "tid": 2,
+      #|                    "deps": [],
+      #|                    "dep_on_active": true
+      #|                },
+      #|                {
+      #|                    "tid": 3,
+      #|                    "deps": [],
+      #|                    "dep_on_active": true
+      #|                }
+      #|            ],
+      #|            "cur_tids": [
+      #|                3
+      #|            ],
+      #|            "output": []
+      #|        }
+      #|    ]
+      #|}
+    ,
+  )
+  inspect!(
     @lib.render_dag_as_text(view),
     content=
-      #| │ 
+      #|   
       #| ⊙  7
       #| ├──╮ 
       #| │  │ 
@@ -574,7 +1180,49 @@ test "complex changes visualization to text" {
       #| │  │  │ 
       #| ├──╯ ─╯ 
       #| ⊙  1
+      #|   
+      #|
+    ,
+  )
+}
+
+test "disconnected concurrent changes visualization to text" {
+  let dag = {
+    nodes: {
+      "1": @lib.Node::{ id: "1", lamport: 1, deps: [] },
+      "2.1": @lib.Node::{ id: "2.1", lamport: 2, deps: ["1"] },
+      "2.2": @lib.Node::{ id: "2.2", lamport: 2, deps: ["1"] },
+      "2.3": @lib.Node::{ id: "2.3", lamport: 2, deps: ["1"] },
+      "3": @lib.Node::{ id: "3", lamport: 3, deps: ["2.1", "2.2", "2.3"] },
+      "A3": @lib.Node::{ id: "A3", lamport: 3, deps: [] },
+      "A4": @lib.Node::{ id: "A4", lamport: 4, deps: ["A3"] },
+    },
+  }
+  let view = @lib.visualize(gen_find(dag), ["3", "A4"])
+  inspect!(
+    @lib.render_dag_as_text(view),
+    content=
+      #|   
+      #| ⊙  A4
       #| │ 
+      #| │ 
+      #| ⊙  A3
+      #|   
+      #|   
+      #| ⊙  3
+      #| ├──╮ ─╮ 
+      #| │  │  │ 
+      #| │  │  ⊙  2.3
+      #| │  │  │ 
+      #| │  │  │ 
+      #| │  ⊙  │  2.2
+      #| │  │  │ 
+      #| │  │  │ 
+      #| ⊙  │  │  2.1
+      #| │  │  │ 
+      #| ├──╯ ─╯ 
+      #| ⊙  1
+      #|   
       #|
     ,
   )

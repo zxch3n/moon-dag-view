@@ -106,12 +106,16 @@ pub fn visualize(
         fn(x) {
           if x.tid == top.tid {
             this_thread = Some(x)
-            return true
+            return not(top.node.deps.is_empty())
           }
           not(x.deps.is_empty())
         },
       )
     let cur_tids = output.map(fn(x) { x.tid })
+    if not(cur_tids.iter().any(fn(x) { x == top.tid })) {
+      cur_tids.push(top.tid)
+    }
+    let cur_index = cur_tids.search_by(fn(x) { x == top.tid }).unwrap()
     if top.node.deps.length() > 0 {
       let node = find(top.node.deps[0]).unwrap()
       if not(visited.contains(node.id)) {
@@ -129,10 +133,6 @@ pub fn visualize(
         }
       }
     }
-    if not(cur_tids.iter().any(fn(x) { x == top.tid })) {
-      cur_tids.push(top.tid)
-    }
-    let cur_index = cur_tids.search_by(fn(x) { x == top.tid }).unwrap()
     for i = 1; i < top.node.deps.length(); i = i + 1 {
       let node = find(top.node.deps[i]).unwrap()
       if not(visited.contains(node.id)) {
@@ -297,9 +297,7 @@ fn render_connection(c : ConnectStatus, buffer : Buffer) -> Unit {
     buffer.write_string("─╮ ")
   } else if c.down && c.right {
     buffer.write_string(" ╭─")
-  } else if c.up {
-    buffer.write_string(" │ ")
-  } else if c.down {
+  } else if c.up && c.down {
     buffer.write_string(" │ ")
   } else if c.left {
     buffer.write_string("───")
