@@ -106,8 +106,8 @@ function renderConnection(type: 'input' | 'output', xFrom: number, xTo: number, 
     const endY = type === 'input' ? y + CELL_SIZE / 2 : y;
 
     let path = ""
-    const midX = (startX + endX) / 2;
-    const midY = (startY + endY) / 2;
+    // const midX = (startX + endX) / 2;
+    // const midY = (startY + endY) / 2;
     if (startX > endX) {
         const controlPoint1X = startX;
         const controlPoint1Y = endY;
