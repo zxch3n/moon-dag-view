@@ -7,7 +7,19 @@
                 "Thread",
                 "Row",
                 "HistoryItem",
-                "DagView"
+                "DagView",
+                "render_dag_as_text"
+            ]
+        },
+        "wasm-gc": {
+            "exports": [
+                "visualize",
+                "Node",
+                "Thread",
+                "Row",
+                "HistoryItem",
+                "DagView",
+                "render_dag_as_text"
             ]
         }
     }

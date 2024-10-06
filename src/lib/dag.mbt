@@ -57,7 +57,7 @@ pub fn visualize(
   frontiers : Array[String]
 ) -> DagView {
   let queue : @moonbitlang/core/priority_queue.T[HistoryItem] = @moonbitlang/core/priority_queue.T::new()
-  let visited : @moonbitlang/core/hashmap.T[String, Int] = @moonbitlang/core/hashmap.T::new()
+  let visited : Map[String, Int] = Map::new()
   let mut next_tid = 0
   for id in frontiers.iter() {
     let node = find(id).unwrap()
@@ -168,11 +168,15 @@ pub fn visualize(
 }
 
 pub fn render_dag_as_text(view : DagView) -> String {
-  let buffer = Buffer::new()
+  let buffer = Array::new()
   for row in view.rows.iter() {
     render_row_as_text(row, buffer)
   }
-  buffer.to_string()
+  let mut ans = ""
+  for a in buffer.iter() {
+    ans += a
+  }
+  ans
 }
 
 struct ConnectStatus {
@@ -221,7 +225,7 @@ fn max(a : Int, b : Int) -> Int {
   }
 }
 
-fn render_row_as_text(row : Row, buffer : Buffer) -> Unit {
+fn render_row_as_text(row : Row, buffer : Array[String]) -> Unit {
   {
     let input_conn = Array::make(
       max(row.input.length(), row.cur_tids.length()),
@@ -246,16 +250,16 @@ fn render_row_as_text(row : Row, buffer : Buffer) -> Unit {
     render_connections(input_conn, buffer)
   }
   {
-    buffer.write_string("\n")
+    buffer.push("\n")
     for cur_tid in row.cur_tids.iter() {
       if cur_tid == row.active.tid {
-        buffer.write_string(" ⊙ ")
+        buffer.push(" ⊙ ")
       } else {
-        buffer.write_string(" │ ")
+        buffer.push(" │ ")
       }
     }
-    buffer.write_string(" \{row.active.node.id}")
-    buffer.write_string("\n")
+    buffer.push(" \{row.active.node.id}")
+    buffer.push("\n")
   }
   let output_conn = Array::make(
     max(row.output.length(), row.cur_tids.length()),
@@ -276,42 +280,42 @@ fn render_row_as_text(row : Row, buffer : Buffer) -> Unit {
     output_conn[i].up = true
   }
   render_connections(output_conn, buffer)
-  buffer.write_string("\n")
+  buffer.push("\n")
 }
 
 fn render_connections(
   connections : Array[ConnectStatus],
-  buffer : Buffer
+  buffer : Array[String]
 ) -> Unit {
   for c in connections.iter() {
     render_connection(c, buffer)
   }
 }
 
-fn render_connection(c : ConnectStatus, buffer : Buffer) -> Unit {
+fn render_connection(c : ConnectStatus, buffer : Array[String]) -> Unit {
   if c.up && c.down && c.left && c.right {
-    buffer.write_string("─┼─")
+    buffer.push("─┼─")
   } else if c.down && c.left && c.right {
-    buffer.write_string("─┬─")
+    buffer.push("─┬─")
   } else if c.up && c.left && c.right {
-    buffer.write_string("─┴─")
+    buffer.push("─┴─")
   } else if c.up && c.down && c.left {
-    buffer.write_string("─┤ ")
+    buffer.push("─┤ ")
   } else if c.up && c.down && c.right {
-    buffer.write_string(" ├─")
+    buffer.push(" ├─")
   } else if c.up && c.left {
-    buffer.write_string("─╯ ")
+    buffer.push("─╯ ")
   } else if c.up && c.right {
-    buffer.write_string(" ╰─")
+    buffer.push(" ╰─")
   } else if c.down && c.left {
-    buffer.write_string("─╮ ")
+    buffer.push("─╮ ")
   } else if c.down && c.right {
-    buffer.write_string(" ╭─")
+    buffer.push(" ╭─")
   } else if c.up && c.down {
-    buffer.write_string(" │ ")
+    buffer.push(" │ ")
   } else if c.left && c.right {
-    buffer.write_string("───")
+    buffer.push("───")
   } else {
-    buffer.write_string("   ")
+    buffer.push("   ")
   }
 }
