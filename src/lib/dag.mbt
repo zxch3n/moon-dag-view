@@ -285,6 +285,10 @@ fn render_connections(
 fn render_connection(c : ConnectStatus, buffer : Buffer) -> Unit {
   if c.up && c.down && c.left && c.right {
     buffer.write_string("─┼─")
+  } else if c.down && c.left && c.right {
+    buffer.write_string("─┬─")
+  } else if c.up && c.left && c.right {
+    buffer.write_string("─┴─")
   } else if c.up && c.down && c.left {
     buffer.write_string("─┤ ")
   } else if c.up && c.down && c.right {
@@ -299,9 +303,7 @@ fn render_connection(c : ConnectStatus, buffer : Buffer) -> Unit {
     buffer.write_string(" ╭─")
   } else if c.up && c.down {
     buffer.write_string(" │ ")
-  } else if c.left {
-    buffer.write_string("───")
-  } else if c.right {
+  } else if c.left && c.right {
     buffer.write_string("───")
   } else {
     buffer.write_string("   ")

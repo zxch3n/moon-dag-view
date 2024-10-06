@@ -350,13 +350,7 @@ test "concurrent changes visualization" {
       #|            "cur_tids": [
       #|                2
       #|            ],
-      #|            "output": [
-      #|                {
-      #|                    "tid": 2,
-      #|                    "deps": [],
-      #|                    "dep_on_active": true
-      #|                }
-      #|            ]
+      #|            "output": []
       #|        }
       #|    ]
       #|}
@@ -452,7 +446,7 @@ test "concurrent changes visualization to text" {
     content=
       #|   
       #| ⊙  3
-      #| ├──╮ ─╮ 
+      #| ├──┬──╮ 
       #| │  │  │ 
       #| │  │  ⊙  2.3
       #| │  │  │ 
@@ -462,7 +456,7 @@ test "concurrent changes visualization to text" {
       #| │  │  │ 
       #| ⊙  │  │  2.1
       #| │  │  │ 
-      #| ├──╯ ─╯ 
+      #| ├──┴──╯ 
       #| ⊙  1
       #|   
       #|
@@ -491,7 +485,7 @@ test "concurrent changes visualization to text" {
     content=
       #|   
       #| ⊙  3
-      #| ├──╮ ─╮ ─╮ 
+      #| ├──┬──┬──╮ 
       #| │  │  │  │ 
       #| │  │  │  ⊙  2.0
       #| │  │  │  │ 
@@ -504,7 +498,7 @@ test "concurrent changes visualization to text" {
       #| ├──┼──┼──╯ 
       #| ⊙  │  │  2.1
       #| │  │  │ 
-      #| ├──╯ ─╯ 
+      #| ├──┴──╯ 
       #| ⊙  1
       #|   
       #|
@@ -1178,7 +1172,7 @@ test "complex changes visualization to text" {
       #| │  │  │ 
       #| ⊙  │  │  2.1
       #| │  │  │ 
-      #| ├──╯ ─╯ 
+      #| ├──┴──╯ 
       #| ⊙  1
       #|   
       #|
@@ -1210,7 +1204,7 @@ test "disconnected concurrent changes visualization to text" {
       #|   
       #|   
       #| ⊙  3
-      #| ├──╮ ─╮ 
+      #| ├──┬──╮ 
       #| │  │  │ 
       #| │  │  ⊙  2.3
       #| │  │  │ 
@@ -1220,7 +1214,7 @@ test "disconnected concurrent changes visualization to text" {
       #| │  │  │ 
       #| ⊙  │  │  2.1
       #| │  │  │ 
-      #| ├──╯ ─╯ 
+      #| ├──┴──╯ 
       #| ⊙  1
       #|   
       #|
